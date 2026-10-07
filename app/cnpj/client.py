@@ -27,7 +27,7 @@ class CNPJClient:
         self.session.mount("https://", adapter)
 
         self.session.headers.update({
-            "User-Agent": "pncp-client/1.0",
+            "User-Agent": "cnpj-client/1.0",
             "Accept": "application/json",
         })
 

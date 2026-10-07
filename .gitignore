@@ -184,3 +184,5 @@ databases/
 .env
 match.json
 logging_config_cronjob.py
+bid_match_image.png
+BidMatch_GUIA_TECNICO.md

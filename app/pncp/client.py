@@ -30,7 +30,7 @@ class PNCPClient:
 
         self.session.headers.update({
                     "Accept": "application/json",
-                    "User-Agent": "server-licita/0.1",
+                    "User-Agent": "bid-match/0.1",
                 })
         
         self.configure_date_range()
@@ -49,8 +49,8 @@ class PNCPClient:
         date_today = datetime.today()
         future_date = date_today + timedelta(days=4)
 
-        self.start_date = date_today.strftime("%Y%m%dT08:00:00")
-        self.end_date = future_date.strftime("%Y%m%dT08:00:00")
+        self.start_date = date_today.strftime("%Y%m%d")
+        self.end_date = future_date.strftime("%Y%m%d")
 
 
     def get_pncp_bids(self):
