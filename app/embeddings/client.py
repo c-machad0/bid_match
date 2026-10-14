@@ -24,8 +24,9 @@ class EmbeddingClient:
         Returns:
             list[float]: Vetor numérico correspondente ao texto.
 
-        Raises: 
-            Exception: Propaga exceções ocorridas durante a comunicação com a API de embeddings.
+        Raises:
+            Exception: Propaga exceções ocorridas durante a comunicação com a
+            API de embeddings.
         """
 
         response = self.client.embeddings.create(

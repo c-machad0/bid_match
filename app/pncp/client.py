@@ -1,7 +1,6 @@
 import time
 
 from datetime import datetime, timedelta
-from pprint import pprint
 
 import requests
 
@@ -32,11 +31,10 @@ class PNCPClient:
                     "Accept": "application/json",
                     "User-Agent": "bid-match/0.1",
                 })
-        
+
         self.configure_date_range()
 
         self.logger = get_logger(__name__)
-
 
     def configure_date_range(self) -> None:
         """
@@ -52,19 +50,17 @@ class PNCPClient:
         self.start_date = date_today.strftime("%Y%m%d")
         self.end_date = future_date.strftime("%Y%m%d")
 
-
     def get_pncp_bids(self):
         """
         Consulta as licitações disponíveis no PNCP no período configurado.
 
-        A consulta percorre todas as páginas disponíveis e retorna as licitações
-        encontradas em uma única lista.
+        A consulta percorre todas as páginas disponíveis e retorna as
+        licitações encontradas em uma única lista.
 
         Returns:
         list[dict]: Lista contendo todas as licitações encontradas.
         """
         return self.bid_pagination()
-
 
     def fetch_page(self, page) -> list[dict]:
         """
@@ -77,14 +73,14 @@ class PNCPClient:
         list[dict]: Lista de licitações encontradas na página. Retorna uma
             lista vazia quando a API não possui mais registros.
 
-        Raises: 
-            requests.exceptions.RequestException: Se ocorrer uma falha 
-                durante a requisição HTTP. 
-            requests.exceptions.JSONDecodeError: Se a resposta não puder 
+        Raises:
+            requests.exceptions.RequestException: Se ocorrer uma falha
+                durante a requisição HTTP.
+            requests.exceptions.JSONDecodeError: Se a resposta não puder
                 ser interpretada como JSON
         """
         try:
-            self.logger.info(f"Consultando página %d do PNCP.", page)
+            self.logger.info(f"Consultando página {page} do PNCP.")
 
             url = f"{self.__base_url}/v1/contratacoes/proposta"
 
@@ -103,11 +99,14 @@ class PNCPClient:
             )
 
             response.raise_for_status()
-            
+
             if response.status_code == 204:
-                self.logger.debug("PNCP | página=%d sem registros | encerrando paginação", page)
+                self.logger.debug(
+                    "PNCP | página=%d sem registros | encerrando paginação",
+                    page
+                )
                 return []
-            
+
             bid_data = response.json()
 
             self.logger.info(
@@ -120,19 +119,19 @@ class PNCPClient:
 
         except requests.exceptions.JSONDecodeError:
             self.logger.error(
-                "Resposta inválida do PNCP | status=%s | content-type=%s | body=%r",
+                "Resposta inválida do PNCP | status=%s | content-type=%s "
+                "| body=%r",
                 response.status_code,
                 response.headers.get("Content-Type"),
                 response.text[:500],
                 )
             raise
-            
+
         except requests.exceptions.RequestException:
             self.logger.exception(
                 "Falha na requisição HTTP."
             )
             raise
-
 
     def bid_pagination(self) -> list[dict]:
         """
@@ -147,7 +146,7 @@ class PNCPClient:
         """
 
         self.logger.info("Consulta no portal PNCP, iniciada.")
-        
+
         page = 1
         bids = []
 
@@ -169,9 +168,8 @@ class PNCPClient:
             page,
             len(bids)
             )
-        
-        return bids
 
+        return bids
 
     def format_bids(self, data) -> list[dict]:
         """
@@ -182,12 +180,13 @@ class PNCPClient:
         data (dict): Resposta JSON retornada pela API do PNCP.
 
         Returns:
-            list[dict]: Lista de licitações contendo identificador PNCP, 
+            list[dict]: Lista de licitações contendo identificador PNCP,
             unidade, município, datas, objeto, modalidade e link.
         """
 
         return [
-            {   "numeroControlePNCP": item.get("numeroControlePNCP"),
+            {
+                "numeroControlePNCP": item.get("numeroControlePNCP"),
                 "nomeUnidade": item.get("unidadeOrgao", {}).get("nomeUnidade"),
                 "municipioNome": item.get("unidadeOrgao", {}).get("municipioNome"),
                 "dataAberturaProposta": datetime.fromisoformat(item.get("dataAberturaProposta")).strftime("%d/%m/%Y %H:%M"),

@@ -1,5 +1,6 @@
 from app.matching.matcher import Matcher
 
+
 def test_cosine_similarity_identical_vectors():
 
     result = Matcher.cosine_similarity(

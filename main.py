@@ -17,10 +17,13 @@ load_dotenv()
 
 
 def main() -> None:
-    """ Executa o fluxo principal de sincronização e processamento das licitações. 
-    O fluxo consulta os dados da empresa, gera seus embeddings, sincroniza novas 
-    licitações com o banco de dados, gera os embeddings das novas licitações, realiza 
-    o matching semântico e envia as oportunidades compatíveis por Telegram. 
+    """
+    Executa o fluxo principal de sincronização e processamento das
+    licitações.
+    O fluxo consulta os dados da empresa, gera seus embeddings,
+    sincroniza novas licitações com o banco de dados, gera os embeddings
+    das novas licitações, realiza o matching semântico e envia as
+    oportunidades compatíveis por Telegram.
     """
 
     logger = get_logger(__name__)
@@ -36,7 +39,9 @@ def main() -> None:
         bid_database = BidDatabase()
 
         company = company_client.get_company_info()
-        company["embedding"] = embedding_service.generate_company_embeddings(company)
+        company["embedding"] = embedding_service.generate_company_embeddings(
+            company
+        )
 
         bids = bid_database.sync_bids()
         new_bids = embedding_service.generate_bid_embeddings(bids)
@@ -44,7 +49,8 @@ def main() -> None:
         if not new_bids:
             logger.warning(
                 "Nenhuma nova licitação encontrada para processamento. "
-                "Sincronização concluída, mas não há novos registros para gerar embeddings."
+                "Sincronização concluída, mas não há novos registros para "
+                "gerar embeddings."
             )
 
         for bid in new_bids:
@@ -82,6 +88,6 @@ def main() -> None:
     finally:
         logger.info("Fim da execução")
 
+
 if __name__ == "__main__":
     main()
-

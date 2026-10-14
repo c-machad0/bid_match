@@ -6,11 +6,9 @@ from .client import PNCPClient
 from logging_config import get_logger
 
 
-
 class BidDatabase:
 
     def __init__(self):
-
         self.logger = get_logger(__name__)
 
         base_dir = Path(__file__).resolve().parent.parent
@@ -27,12 +25,11 @@ class BidDatabase:
 
         self.create_db()
 
-
     def create_db(self) -> None:
         """
         Cria a tabela de licitações caso ela ainda não exista.
 
-        A tabela utiliza o identificador PNCP como chave única para impedir 
+        A tabela utiliza o identificador PNCP como chave única para impedir
         a inserção duplicada de uma mesma licitação.
         """
 
@@ -57,19 +54,18 @@ class BidDatabase:
 
         self.logger.info("Tabela 'licitacoes' verificada/criada com sucesso.")
 
-
     def sync_bids(self):
         """
-        Sincroniza as licitações do PNCP com o banco de dados local. 
-        
-        Consulta as contratações disponíveis no PNCP, filtra apenas as 
-        licitações da modalidade "Dispensa" e insere os novos registros 
-        na tabela local. 
-        
-        Licitações que já existem no banco são ignoradas. 
-        
-        Returns: 
-            list[dict]: Lista contendo apenas as novas licitações inseridas 
+        Sincroniza as licitações do PNCP com o banco de dados local.
+
+        Consulta as contratações disponíveis no PNCP, filtra apenas as
+        licitações da modalidade "Dispensa" e insere os novos registros
+        na tabela local.
+
+        Licitações que já existem no banco são ignoradas.
+
+        Returns:
+            list[dict]: Lista contendo apenas as novas licitações inseridas
             durante a sincronização.
         """
 
@@ -88,26 +84,27 @@ class BidDatabase:
 
         for item in pncp_response:
 
-            # Essa condição pode ser tanto alterada, para conter outra modalidade, quanto retirada por completo
+            # Essa condição pode ser tanto alterada, para conter outra
+            # modalidade, quanto retirada por completo
             if item["modalidadeNome"] != "Dispensa":
                 continue
 
             bid = {
-            "id_pncp": item["numeroControlePNCP"],
-            "municipio": item["municipioNome"],
-            "unidade": item["nomeUnidade"],
-            "data_abertura": item["dataAberturaProposta"],
-            "data_encerramento": item["dataEncerramentoProposta"],
-            "objeto": item["objetoCompra"],
-            "modalidade": item["modalidadeNome"],
-            "link": item["linkSistemaOrigem"],
+                "id_pncp": item["numeroControlePNCP"],
+                "municipio": item["municipioNome"],
+                "unidade": item["nomeUnidade"],
+                "data_abertura": item["dataAberturaProposta"],
+                "data_encerramento": item["dataEncerramentoProposta"],
+                "objeto": item["objetoCompra"],
+                "modalidade": item["modalidadeNome"],
+                "link": item["linkSistemaOrigem"],
             }
-            
+
             self.cursor.execute(
                 """
                 INSERT OR IGNORE INTO licitacoes
 
-                (   
+                (
                     id_pncp,
                     municipio,
                     unidade,
@@ -122,7 +119,7 @@ class BidDatabase:
 
                 """,
 
-                (   
+                (
                     bid["id_pncp"],
                     bid["municipio"],
                     bid["unidade"],
@@ -141,7 +138,6 @@ class BidDatabase:
         self.logger.info("Dados sincronizados com sucesso!")
 
         return new_bids
-
 
     def get_all_bids(self) -> list[dict]:
         """
@@ -164,7 +160,6 @@ class BidDatabase:
             for row in self.cursor.fetchall()
         ]
 
-
     def update_bid_embedding(self, id_pncp: str, embedding: list[float]) -> None:
         """
         Atualiza o embedding de uma licitação existente.
@@ -173,8 +168,8 @@ class BidDatabase:
             id_pncp: Identificador da licitação no PNCP.
             embedding: Vetor de embedding associado à licitação.
 
-        Raises: 
-            sqlite3.Error: Se ocorrer um erro durante a atualização no banco 
+        Raises:
+            sqlite3.Error: Se ocorrer um erro durante a atualização no banco
                 de dados.
         """
 

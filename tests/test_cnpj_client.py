@@ -2,8 +2,8 @@ from unittest.mock import Mock
 
 from app.cnpj.client import CNPJClient
 
-def test_get_company_info():
 
+def test_get_company_info():
     client = CNPJClient("12345678000199")
 
     fake_response = Mock()

@@ -1,5 +1,6 @@
 from app.notification.formatter import Formatter
 
+
 def test_format_message():
     bid = {
         "licitacao": "Aquisição de equipamentos",
@@ -42,6 +43,6 @@ def test_format_message_without_link():
         }
 
     message = Formatter.format_message(bid)
-    
+
     assert "Aquisição de equipamentos" in message
     assert "Não informado" in message

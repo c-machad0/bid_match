@@ -9,7 +9,6 @@ from logging_config import get_logger
 class CNPJClient:
 
     def __init__(self, cnpj):
-
         self.logger = get_logger(__name__)
 
         self.__base_url = "https://brasilapi.com.br/api/"
@@ -17,9 +16,9 @@ class CNPJClient:
         retry_strategy = Retry(
             total=3,
             status_forcelist=[408, 429, 500, 502, 504],
-            allowed_methods=['GET'],
+            allowed_methods=["GET"],
             backoff_factor=1,
-            respect_retry_after_header=True
+            respect_retry_after_header=True,
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
 
@@ -33,7 +32,6 @@ class CNPJClient:
 
         self.cnpj = cnpj
 
-
     def get_company_info(self) -> dict:
         """
         Consulta a BrasilAPI utilizando o CNPJ configurado e retorna
@@ -44,10 +42,10 @@ class CNPJClient:
             dict: Dados da empresa, incluindo razão social, CNPJ,
             CNAE principal e CNAEs secundários.
 
-        Raises: 
-            requests.exceptions.RequestException: Se ocorrer uma falha na comunicação com a API.
+        Raises:
+            requests.exceptions.RequestException: Se ocorrer uma falha na
+            comunicação com a API.
         """
-
         url = f"{self.__base_url}cnpj/v1/{self.cnpj}"
 
         try:
@@ -55,7 +53,7 @@ class CNPJClient:
 
             response = self.session.get(
                 url,
-                timeout=(5, 15)
+                timeout=(5, 15),
             )
 
             response.raise_for_status()
@@ -65,26 +63,15 @@ class CNPJClient:
             self.logger.info("Coleta de dados feita com sucesso!")
 
             return {
-
-                "razao_social":
-                    data.get("razao_social"),
-
-                "cnpj":
-                    data.get("cnpj"),
-
-                "cnae_principal":
-                    data.get("cnae_fiscal_descricao"),
-
-                "cnaes_secundarios":
-                    [
-                        cnae.get("descricao")
-                        for cnae in data.get(
-                            "cnaes_secundarios",
-                            []
-                        )
-                    ]
+                "razao_social": data.get("razao_social"),
+                "cnpj": data.get("cnpj"),
+                "cnae_principal": data.get("cnae_fiscal_descricao"),
+                "cnaes_secundarios": [
+                    cnae.get("descricao")
+                    for cnae in data.get("cnaes_secundarios", [])
+                ],
             }
-        
+
         except requests.exceptions.RequestException:
             self.logger.exception("Falha na requisição HTTP")
             raise

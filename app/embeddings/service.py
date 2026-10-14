@@ -11,13 +11,11 @@ class EmbeddingService:
         self.embedding_client = EmbeddingClient()
         self.logger = get_logger(__name__)
 
-
     def build_activity_text(self, activity: str) -> str:
         return (
             "Área de atuação empresarial:\n"
             f"{activity}"
         )
-
 
     def build_bid_text(self, bid: dict) -> str:
         return (
@@ -25,7 +23,6 @@ class EmbeddingService:
             f"Modalidade: {bid['modalidade']}\n"
             f"Objeto: {bid['objeto']}"
         )
-
 
     def generate_company_embeddings(self, company) -> list[dict]:
         """
@@ -44,8 +41,9 @@ class EmbeddingService:
             *company["cnaes_secundarios"]
         ]
 
-        self.logger.info("Gerando embeddings da empresa | atividades=%d",
-                         len(activities)
+        self.logger.info(
+            "Gerando embeddings da empresa | atividades=%d",
+            len(activities)
         )
 
         embeddings = []
@@ -64,30 +62,29 @@ class EmbeddingService:
         self.logger.info(
                 "Embeddings da empresa gerados | quantidade=%d",
                 len(embeddings)
-            )
-        
+        )
         return embeddings
-
 
     def generate_bid_embeddings(self, bids) -> list[dict]:
         """
         Gera embeddings para licitações que ainda não possuem embedding.
 
-        Licitações que já possuem um embedding são mantidas sem uma nova 
-        chamada à API. Os embeddings existentes são desserializados para 
-        listas Python e as licitações que receberam novos embeddings são 
+        Licitações que já possuem um embedding são mantidas sem uma nova
+        chamada à API. Os embeddings existentes são desserializados para
+        listas Python e as licitações que receberam novos embeddings são
         retornadas.
 
-        Args: 
+        Args:
             bids: Lista de licitações a serem processadas.
 
         Returns:
-            list[dict]: Lista contendo apenas as licitações que receberam 
+            list[dict]: Lista contendo apenas as licitações que receberam
             um novo embedding.
         """
 
-        self.logger.info("Gerando embeddings das licitações | quantidade=%d",
-                        len(bids)
+        self.logger.info(
+                "Gerando embeddings das licitações | quantidade=%d",
+                len(bids)
         )
 
         generated_bids = []
@@ -104,10 +101,8 @@ class EmbeddingService:
             bid["embedding"] = embedding
             generated_bids.append(bid)
 
-
         self.logger.info(
                 "Embeddings das licitações gerados | quantidade=%d",
                 len(generated_bids)
         )
-        
         return generated_bids

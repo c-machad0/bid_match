@@ -19,19 +19,19 @@ class Notify:
 
         self.logger = get_logger(__name__)
 
-
     async def send_message(self, matches):
         """
-        Envia uma mensagem no Telegram para cada licitação compatível. 
-        
-        Cada licitação é formatada individualmente antes do envio. Caso não 
-        existam licitações compatíveis, nenhuma mensagem é enviada. 
-        
-        Args: 
-            matches: Lista de licitações compatíveis com a empresa. 
-            
-        Raises: 
-            TelegramError: Se ocorrer uma falha durante o envio da mensagem para o Telegram.
+        Envia uma mensagem no Telegram para cada licitação compatível.
+
+        Cada licitação é formatada individualmente antes do envio. Caso não
+        existam licitações compatíveis, nenhuma mensagem é enviada.
+
+        Args:
+            matches: Lista de licitações compatíveis com a empresa.
+
+        Raises:
+            TelegramError: Se ocorrer uma falha durante o envio da mensagem
+            para o Telegram.
         """
 
         try:
@@ -40,7 +40,7 @@ class Notify:
                 for bid in matches:
 
                     text_formatted = self.message_formatter.format_message(bid)
-                    
+
                     await self.bot.send_message(
                         chat_id=self.chat_id,
                         text=text_formatted
